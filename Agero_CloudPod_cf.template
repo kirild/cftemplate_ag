@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Build Cloud Pod",
+    "Description": "Build Cloud Pod", 
     "Parameters": {
         "0VpcId": {
             "Type": "String",
@@ -16,7 +16,7 @@
             "Type": "Number",
             "MinValue": "0",
             "MaxValue": "255",
-            "Description": "3rd Octact of Subnet for Network of the Pod, if you enter 103 then the POD will be a 10.201.103.0/24 network",
+            "Description": "3rd Octet of Subnet for Network of the Pod, if you enter 103 then the POD will be a 10.201.103.0/24 network",
             "Default": "10"
         },
         "2MakeLBForA00": {
@@ -40,159 +40,212 @@
             "MinValue": "0",
             "MaxValue": "1"
         }
+    },
+    "Conditions": {
+        "CreateLB1": {
+            "Fn::Equals": [
+                {
+                    "Ref": "2MakeLBForA00"
+                },
+                "1"
+            ]
         },
-        "Conditions": {
-            "CreateLB1" : {"Fn::Equals" : [{"Ref": "2MakeLBForA00"}, "1"]},
-            "CreateLB2" : {"Fn::Equals" : [{"Ref": "3MakeLBForA01"}, "1"]},
-            "CreateLB3" : {"Fn::Equals" : [{"Ref": "4MakeLBForB"}, "1"]}
+        "CreateLB2": {
+            "Fn::Equals": [
+                {
+                    "Ref": "3MakeLBForA01"
+                },
+                "1"
+            ]
         },
-        "Resources": {
-            "EC2Subnet": {
-                "Type": "AWS::EC2::Subnet",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "CidrBlock": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "10.201.",
-                                {
-                                    "Ref": "1SubnetNumber"
-                                },
-                                ".1/26"
-                            ]
-                        ]
-                    },
-                    "AvailabilityZone": {
-                        "Fn::Select": [
-                            "0",
+        "CreateLB3": {
+            "Fn::Equals": [
+                {
+                    "Ref": "4MakeLBForB"
+                },
+                "1"
+            ]
+        }
+    },
+ "Resources": {
+        "EC2Subnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "CidrBlock": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "10.201.",
                             {
-                                "Fn::GetAZs": ""
-                            }
+                                "Ref": "1SubnetNumber"
+                            },
+                            ".1/26"
                         ]
-                    },
-                    "Tags": [
+                    ]
+                },
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
                         {
-                            "Key": "Application",
-                            "Value": {
-                                "Ref": "AWS::StackName"
-                            }
+                            "Fn::GetAZs": ""
                         }
                     ]
-                }
-            },
-            "RDS1Subnet": {
-                "Type": "AWS::EC2::Subnet",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "CidrBlock": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "10.201.",
-                                {
-                                    "Ref": "1SubnetNumber"
-                                },
-                                ".64/28"
-                            ]
-                        ]
-                    },
-                    "AvailabilityZone": {
-                        "Fn::Select": [
-                            "0",
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "RDS1Subnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "CidrBlock": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "10.201.",
                             {
-                                "Fn::GetAZs": ""
-                            }
+                                "Ref": "1SubnetNumber"
+                            },
+                            ".64/28"
                         ]
-                    },
-                    "Tags": [
+                    ]
+                },
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "0",
                         {
-                            "Key": "Application",
-                            "Value": {
-                                "Ref": "AWS::StackName"
-                            }
+                            "Fn::GetAZs": ""
                         }
                     ]
-                }
-            },
-            "RDS2Subnet": {
-                "Type": "AWS::EC2::Subnet",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "CidrBlock": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "10.201.",
-                                {
-                                    "Ref": "1SubnetNumber"
-                                },
-                                ".80/28"
-                            ]
-                        ]
-                    },
-                    "AvailabilityZone": {
-                        "Fn::Select": [
-                            "2",
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "RDS2Subnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "CidrBlock": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "10.201.",
                             {
-                                "Fn::GetAZs": ""
-                            }
+                                "Ref": "1SubnetNumber"
+                            },
+                            ".80/28"
                         ]
-                    },
-                    "Tags": [
+                    ]
+                },
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "2",
                         {
-                            "Key": "Application",
-                            "Value": {
-                                "Ref": "AWS::StackName"
-                            }
+                            "Fn::GetAZs": ""
                         }
                     ]
-                }
-            },
-            "S1RouteTableAssociation": {
-                "Type": "AWS::EC2::SubnetRouteTableAssociation",
-                "DeletionPolicy": "Delete",
-                "Properties": {
-                    "SubnetId": {
-                        "Ref": "EC2Subnet"
-                    },
-                    "RouteTableId": "rtb-cbe41dae"
-                }
-            },
-            "S2RouteTableAssociation": {
-                "Type": "AWS::EC2::SubnetRouteTableAssociation",
-                "DeletionPolicy": "Delete",
-                "Properties": {
-                    "SubnetId": {
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "S1RouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "DeletionPolicy": "Delete",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "EC2Subnet"
+                },
+                "RouteTableId": "rtb-cbe41dae"
+            }
+        },
+        "S2RouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "DeletionPolicy": "Delete",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "RDS1Subnet"
+                },
+                "RouteTableId": "rtb-cbe41dae"
+            }
+        },
+        "S3RouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "DeletionPolicy": "Delete",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "RDS2Subnet"
+                },
+                "RouteTableId": "rtb-cbe41dae"
+            }
+        },
+        "RDSGroup1": {
+            "Type": "AWS::RDS::DBSubnetGroup",
+            "Properties": {
+                "DBSubnetGroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Group 1 in ",
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                        ]
+                    ]
+                },
+                "SubnetIds": [
+                    {
                         "Ref": "RDS1Subnet"
                     },
-                    "RouteTableId": "rtb-cbe41dae"
-                }
-            },
-            "S3RouteTableAssociation": {
-                "Type": "AWS::EC2::SubnetRouteTableAssociation",
-                "DeletionPolicy": "Delete",
-                "Properties": {
-                    "SubnetId": {
+                    {
                         "Ref": "RDS2Subnet"
-                    },
-                    "RouteTableId": "rtb-cbe41dae"
-                }
-            },
-            "RDSGroup1": {
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+            "RDSGroup2": {
                 "Type": "AWS::RDS::DBSubnetGroup",
                 "Properties": {
                     "DBSubnetGroupDescription": {
                         "Fn::Join": [
                             "",
                             [
-                                "RDS Group 1 in ",
+                                "RDS Group 2 in ",
                                 {
                                     "Ref": "AWS::StackName"
                                 }
@@ -201,10 +254,10 @@
                     },
                     "SubnetIds": [
                         {
-                            "Ref": "RDS1Subnet"
-                        },
-                        {
                             "Ref": "RDS2Subnet"
+                        },
+                        {
+                            "Ref": "RDS1Subnet"
                         }
                     ],
                     "Tags": [
@@ -217,971 +270,971 @@
                     ]
                 }
             },
-            "myNetworkAcl": {
-                "Type": "AWS::EC2::NetworkAcl",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+        "myNetworkAcl": {
+            "Type": "AWS::EC2::NetworkAcl",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "myNetworkAclEgressEntry": {
+            "Type": "AWS::EC2::NetworkAclEntry",
+            "Properties": {
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                },
+                "RuleNumber": "100",
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "Egress": "true",
+                "CidrBlock": "10.0.0.0/8"
+            }
+        },
+        "myNetworkAclEgressEntry2": {
+            "Type": "AWS::EC2::NetworkAclEntry",
+            "Properties": {
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                },
+                "RuleNumber": "101",
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "Egress": "true",
+                "CidrBlock": "192.168.0.0/16"
+            }
+        },
+        "myNetworkAclIngressEntry": {
+            "Type": "AWS::EC2::NetworkAclEntry",
+            "Properties": {
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                },
+                "RuleNumber": "100",
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "Egress": "false",
+                "CidrBlock": "10.0.0.0/8"
+            }
+        },
+        "myNetworkAclIngressEntry2": {
+            "Type": "AWS::EC2::NetworkAclEntry",
+            "Properties": {
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                },
+                "RuleNumber": "101",
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "Egress": "false",
+                "CidrBlock": "192.168.0.0/16"
+            }
+        },
+        "EC2SubnetNetworkAclAssociation": {
+            "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "EC2Subnet"
+                },
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                }
+            }
+        },
+        "RDS1SubnetNetworkAclAssociation": {
+            "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "RDS1Subnet"
+                },
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                }
+            }
+        },
+        "RDS2SubnetNetworkAclAssociation": {
+            "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "RDS2Subnet"
+                },
+                "NetworkAclId": {
+                    "Ref": "myNetworkAcl"
+                }
+            }
+        },
+        "DbSecurityByEC2SecurityGroup": {
+            "Type": "AWS::RDS::DBSecurityGroup",
+            "Properties": {
+                "EC2VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "DBSecurityGroupIngress": {
+                    "EC2SecurityGroupId": {
+                        "Ref": "OracleSecurityGroup"
+                    }
+                },
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Security Group Oracle 1 in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "myNetworkAclEgressEntry": {
-                "Type": "AWS::EC2::NetworkAclEntry",
-                "Properties": {
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    },
-                    "RuleNumber": "100",
-                    "Protocol": "-1",
-                    "RuleAction": "allow",
-                    "Egress": "true",
-                    "CidrBlock": "10.0.0.0/8"
-                }
-            },
-            "myNetworkAclEgressEntry2": {
-                "Type": "AWS::EC2::NetworkAclEntry",
-                "Properties": {
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    },
-                    "RuleNumber": "101",
-                    "Protocol": "-1",
-                    "RuleAction": "allow",
-                    "Egress": "true",
-                    "CidrBlock": "192.168.0.0/16"
-                }
-            },
-            "myNetworkAclIngressEntry": {  
-                   "Type": "AWS::EC2::NetworkAclEntry",
-                   "Properties": {
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    },
-                    "RuleNumber": "100",
-                    "Protocol": "-1",
-                    "RuleAction": "allow",
-                    "Egress": "false",
-                    "CidrBlock": "10.0.0.0/8"
-                }
-            },
-            "myNetworkAclIngressEntry2": {  
-                   "Type": "AWS::EC2::NetworkAclEntry",
-                   "Properties": {
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    },
-                    "RuleNumber": "101",
-                    "Protocol": "-1",
-                    "RuleAction": "allow",
-                    "Egress": "false",
-                    "CidrBlock": "192.168.0.0/16"
-                }
-            },
-            "EC2SubnetNetworkAclAssociation": {
-                "Type": "AWS::EC2::SubnetNetworkAclAssociation",
-                "Properties": {
-                    "SubnetId": {
-                        "Ref": "EC2Subnet"
-                    },
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    }
-                }
-            },
-            "RDS1SubnetNetworkAclAssociation": {
-                "Type": "AWS::EC2::SubnetNetworkAclAssociation",
-                "Properties": {
-                    "SubnetId": {
-                        "Ref": "RDS1Subnet"
-                    },
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    }
-                }
-            },
-            "RDS2SubnetNetworkAclAssociation": {
-                "Type": "AWS::EC2::SubnetNetworkAclAssociation",
-                "Properties": {
-                    "SubnetId": {
-                        "Ref": "RDS2Subnet"
-                    },
-                    "NetworkAclId": {
-                        "Ref": "myNetworkAcl"
-                    }
-                }
-            },
-            "DbSecurityByEC2SecurityGroup": {
-                "Type": "AWS::RDS::DBSecurityGroup",
-                "Properties": {
-                    "EC2VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "DBSecurityGroupIngress": {
-                        "EC2SecurityGroupId": {
-                            "Ref": "OracleSecurityGroup"
-                        }
-                    },
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Security Group Oracle 1 in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "OracleSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Security Group Oracle in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "OracleSecurityGroup": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Security Group Oracle in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "SecurityGroupIngress": [
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": {
-                                "Fn::Join": [
-                                    "",
-                                    [
-                                        "10.201.",
-                                        {
-                                            "Ref": "1SubnetNumber"
-                                        },
-                                        ".0/24"
-                                    ]
+                    ]
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "10.201.",
+                                    {
+                                        "Ref": "1SubnetNumber"
+                                    },
+                                    ".0/24"
                                 ]
-                            }
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": "192.168.0.0/16"
+                            ]
                         }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "DbSecurity2ByEC2SecurityGroup": {
+            "Type": "AWS::RDS::DBSecurityGroup",
+            "Properties": {
+                "EC2VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "DBSecurityGroupIngress": {
+                    "EC2SecurityGroupId": {
+                        "Ref": "OracleSecurityGroup2"
+                    }
+                },
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Security Group Oracle State Farm in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "DbSecurity2ByEC2SecurityGroup": {
-                "Type": "AWS::RDS::DBSecurityGroup",
-                "Properties": {
-                    "EC2VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "DBSecurityGroupIngress": {
-                        "EC2SecurityGroupId": {
-                            "Ref": "OracleSecurityGroup2"
-                        }
-                    },
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Security Group Oracle State Farm in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "OracleSecurityGroup2": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Security Group Oracle State Farm in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "OracleSecurityGroup2": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Properties": {
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Security Group Oracle State Farm in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "SecurityGroupIngress": [
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": {
-                                "Fn::Join": [
-                                    "",
-                                    [
-                                        "10.201.",
-                                        {
-                                            "Ref": "1SubnetNumber"
-                                        },
-                                        ".0/24"
-                                    ]
+                    ]
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "10.201.",
+                                    {
+                                        "Ref": "1SubnetNumber"
+                                    },
+                                    ".0/24"
                                 ]
-                            }
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "1521",
-                            "ToPort": "1521",
-                            "CidrIp": "192.168.0.0/16"
+                            ]
                         }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "1521",
+                        "ToPort": "1521",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "OracleParamGroup": {
+        "Type": "AWS::RDS::DBParameterGroup",
+            "Properties": {
+                "Description": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Parameter Group for Oracle in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "OracleParamGroup": {
-                "Type": "AWS::RDS::DBParameterGroup",
-                "Properties": {
-                    "Description": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Parameter Group for Oracle in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "Family": "oracle-se-11.2",
-                    "Parameters": {
-                        "recyclebin": "on",
-                        "aq_tm_processes": "0",
-                        "audit_trail": "DB",
-                        "background_core_dump": "partial",
-                        "bitmap_merge_area_size": "1048576",
-                        "blank_trimming": "FALSE",
-                        "client_result_cache_lag": "3000",
-                        "client_result_cache_size": "0",
-                        "commit_point_strength": "1",
-                        "compatible": "11.2.0.0.0",
-                        "control_file_record_keep_time": "7",
-                        "control_management_pack_access": "DIAGNOSTIC+TUNING",
-                        "cpu_count": "8",
-                        "create_bitmap_area_size": "8388608",
-                        "cursor_bind_capture_destination": "memory+disk",
-                        "cursor_sharing": "EXACT",
-                        "db_block_checking": "FALSE",
-                        "db_block_checksum": "Typical",
-                        "db_cache_advice": "ON",
-                        "db_cache_size": "0",
-                        "db_file_multiblock_read_count": "32",
-                        "db_files": "2000",
-                        "db_flashback_retention_target": "1440",
-                        "db_keep_cache_size": "0",
-                        "db_lost_write_protect": "NONE",
-                        "db_recycle_cache_size": "0",
-                        "db_securefile": "PERMITTED",
-                        "db_ultra_safe": "OFF",
-                        "db_writer_processes": "1",
-                        "ddl_lock_timeout": "0",
-                        "deferred_segment_creation": "TRUE",
-                        "dispatchers": "(PROTOCOL=TCP) (SERVICE=orsdlc12XDB)",
-                        "distributed_lock_timeout": "60",
-                        "dml_locks": "9996",
-                        "enable_ddl_logging": "FALSE",
-                        "fast_start_parallel_rollback": "Low",
-                        "global_names": "FALSE",
-                        "hs_autoregister": "TRUE",
-                        "job_queue_processes": "1000",
-                        "large_pool_size": "0",
-                        "ldap_directory_access": "None",
-                        "license_max_sessions": "0",
-                        "license_max_users": "0",
-                        "license_sessions_warning": "0",
-                        "log_archive_max_processes": "4",
-                        "log_archive_min_succeed_dest": "1",
-                        "log_archive_trace": "0",
-                        "log_buffer": "17989632",
-                        "log_checkpoint_interval": "0",
-                        "log_checkpoint_timeout": "1800",
-                        "log_checkpoints_to_alert": "FALSE",
-                        "max_dump_file_size": "unlimited",
-                        "nls_length_semantics": "BYTE",
-                        "nls_nchar_conv_excp": "FALSE",
-                        "object_cache_max_size_percent": "10",
-                        "object_cache_optimal_size": "102400",
-                        "olap_page_pool_size": "0",
-                        "open_cursors": "300",
-                        "open_links": "4",
-                        "open_links_per_instance": "4",
-                        "optimizer_capture_sql_plan_baselines": "FALSE",
-                        "optimizer_dynamic_sampling": "2",
-                        "optimizer_features_enable": "11.2.0.3",
-                        "optimizer_index_caching": "0",
-                        "optimizer_index_cost_adj": "100",
-                        "optimizer_mode":  "ALL_ROWS",
-                        "optimizer_secure_view_merging": "TRUE",
-                        "optimizer_use_invisible_indexes": "FALSE",
-                        "optimizer_use_pending_statistics": "FALSE",
-                        "optimizer_use_sql_plan_baselines": "TRUE",
-                        "parallel_adaptive_multi_user": "TRUE",
-                        "parallel_degree_limit": "CPU",
-                        "parallel_degree_policy": "MANUAL",
-                        "parallel_execution_message_size": "16384",
-                        "parallel_max_servers": "320",
-                        "parallel_min_servers": "0",
-                        "parallel_min_time_threshold": "AUTO",
-                        "parallel_servers_target": "128",
-                        "parallel_threads_per_cpu": "2",
-                        "permit_92_wrap_format": "TRUE",
-                        "pga_aggregate_target": "0",
-                        "plscope_settings": "IDENTIFIERS:NONE",
-                        "plsql_code_type": "INTERPRETED",
-                        "plsql_optimize_level": "2",
-                        "plsql_warnings": "DISABLE:ALL",
-                        "processes": "1500",
-                        "query_rewrite_enabled": "TRUE",
-                        "query_rewrite_integrity": "enforced",
-                        "remote_dependencies_mode": "TIMESTAMP",
-                        "replication_dependency_tracking": "TRUE",
-                        "resource_limit": "FALSE",
-                        "result_cache_max_result": "5",
-                        "result_cache_max_size": "7110656",
-                        "result_cache_mode": "MANUAL",
-                        "result_cache_remote_expiration": "0",
-                        "resumable_timeout": "0",
-                        "sec_case_sensitive_logon": "TRUE",
-                        "sec_max_failed_login_attempts": "10",
-                        "sec_protocol_error_further_action": "CONTINUE",
-                        "sec_protocol_error_trace_action": "TRACE",
-                        "sec_return_server_release_banner": "FALSE",
-                        "session_max_open_files": "10",
-                        "sessions": "2272",
-                        "sga_max_size": "2835349504",
-                        "sga_target": "0",
-                        "shadow_core_dump": "partial",
-                        "shared_pool_reserved_size": "48653926",
-                        "shared_pool_size": "0",
-                        "shared_servers": "1",
-                        "skip_unusable_indexes": "TRUE",
-                        "sort_area_retained_size": "0",
-                        "sort_area_size": "65536",
-                        "sql92_security": "FALSE",
-                        "sqltune_category": "DEFAULT",
-                        "star_transformation_enabled": "FALSE",
-                        "statistics_level": "TYPICAL",
-                        "streams_pool_size": "0",
-                        "timed_os_statistics": "0",
-                        "timed_statistics": "TRUE",
-                        "trace_enabled": "TRUE",
-                        "transactions": "2499",
-                        "transactions_per_rollback_segment": "5",
-                        "undo_retention": "900",
-                        "workarea_size_policy": "Auto"
-                    },
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    ]
+                },
+                "Family": "oracle-se-11.2",
+                "Parameters": {
+                    "recyclebin": "on",
+                    "aq_tm_processes": "0",
+                    "audit_trail": "DB",
+                    "background_core_dump": "partial",
+                    "bitmap_merge_area_size": "1048576",
+                    "blank_trimming": "FALSE",
+                    "client_result_cache_lag": "3000",
+                    "client_result_cache_size": "0",
+                    "commit_point_strength": "1",
+                    "compatible": "11.2.0.0.0",
+                    "control_file_record_keep_time": "7",
+                    "control_management_pack_access": "DIAGNOSTIC+TUNING",
+                    "cpu_count": "8",
+                    "create_bitmap_area_size": "8388608",
+                    "cursor_bind_capture_destination": "memory+disk",
+                    "cursor_sharing": "EXACT",
+                    "db_block_checking": "FALSE",
+                    "db_block_checksum": "Typical",
+                    "db_cache_advice": "ON",
+                    "db_cache_size": "0",
+                    "db_file_multiblock_read_count": "32",
+                    "db_files": "2000",
+                    "db_flashback_retention_target": "1440",
+                    "db_keep_cache_size": "0",
+                    "db_lost_write_protect": "NONE",
+                    "db_recycle_cache_size": "0",
+                    "db_securefile": "PERMITTED",
+                    "db_ultra_safe": "OFF",
+                    "db_writer_processes": "1",
+                    "ddl_lock_timeout": "0",
+                    "deferred_segment_creation": "TRUE",
+                    "dispatchers": "(PROTOCOL=TCP) (SERVICE=orsdlc12XDB)",
+                    "distributed_lock_timeout": "60",
+                    "dml_locks": "9996",
+                    "enable_ddl_logging": "FALSE",
+                    "fast_start_parallel_rollback": "Low",
+                    "global_names": "FALSE",
+                    "hs_autoregister": "TRUE",
+                    "job_queue_processes": "1000",
+                    "large_pool_size": "0",
+                    "ldap_directory_access": "None",
+                    "license_max_sessions": "0",
+                    "license_max_users": "0",
+                    "license_sessions_warning": "0",
+                    "log_archive_max_processes": "4",
+                    "log_archive_min_succeed_dest": "1",
+                    "log_archive_trace": "0",
+                    "log_buffer": "17989632",
+                    "log_checkpoint_interval": "0",
+                    "log_checkpoint_timeout": "1800",
+                    "log_checkpoints_to_alert": "FALSE",
+                    "max_dump_file_size": "unlimited",
+                    "nls_length_semantics": "BYTE",
+                    "nls_nchar_conv_excp": "FALSE",
+                    "object_cache_max_size_percent": "10",
+                    "object_cache_optimal_size": "102400",
+                    "olap_page_pool_size": "0",
+                    "open_cursors": "300",
+                    "open_links": "4",
+                    "open_links_per_instance": "4",
+                    "optimizer_capture_sql_plan_baselines": "FALSE",
+                    "optimizer_dynamic_sampling": "2",
+                    "optimizer_features_enable": "11.2.0.3",
+                    "optimizer_index_caching": "0",
+                    "optimizer_index_cost_adj": "100",
+                    "optimizer_mode": "ALL_ROWS",
+                    "optimizer_secure_view_merging": "TRUE",
+                    "optimizer_use_invisible_indexes": "FALSE",
+                    "optimizer_use_pending_statistics": "FALSE",
+                    "optimizer_use_sql_plan_baselines": "TRUE",
+                    "parallel_adaptive_multi_user": "TRUE",
+                    "parallel_degree_limit": "CPU",
+                    "parallel_degree_policy": "MANUAL",
+                    "parallel_execution_message_size": "16384",
+                    "parallel_max_servers": "320",
+                    "parallel_min_servers": "0",
+                    "parallel_min_time_threshold": "AUTO",
+                    "parallel_servers_target": "128",
+                    "parallel_threads_per_cpu": "2",
+                    "permit_92_wrap_format": "TRUE",
+                    "pga_aggregate_target": "0",
+                    "plscope_settings": "IDENTIFIERS:NONE",
+                    "plsql_code_type": "INTERPRETED",
+                    "plsql_optimize_level": "2",
+                    "plsql_warnings": "DISABLE:ALL",
+                    "processes": "1500",
+                    "query_rewrite_enabled": "TRUE",
+                    "query_rewrite_integrity": "enforced",
+                    "remote_dependencies_mode": "TIMESTAMP",
+                    "replication_dependency_tracking": "TRUE",
+                    "resource_limit": "FALSE",
+                    "result_cache_max_result": "5",
+                    "result_cache_max_size": "7110656",
+                    "result_cache_mode": "MANUAL",
+                    "result_cache_remote_expiration": "0",
+                    "resumable_timeout": "0",
+                    "sec_case_sensitive_logon": "TRUE",
+                    "sec_max_failed_login_attempts": "10",
+                    "sec_protocol_error_further_action": "CONTINUE",
+                    "sec_protocol_error_trace_action": "TRACE",
+                    "sec_return_server_release_banner": "FALSE",
+                    "session_max_open_files": "10",
+                    "sessions": "2272",
+                    "sga_max_size": "2835349504",
+                    "sga_target": "0",
+                    "shadow_core_dump": "partial",
+                    "shared_pool_reserved_size": "48653926",
+                    "shared_pool_size": "0",
+                    "shared_servers": "1",
+                    "skip_unusable_indexes": "TRUE",
+                    "sort_area_retained_size": "0",
+                    "sort_area_size": "65536",
+                    "sql92_security": "FALSE",
+                    "sqltune_category": "DEFAULT",
+                    "star_transformation_enabled": "FALSE",
+                    "statistics_level": "TYPICAL",
+                    "streams_pool_size": "0",
+                    "timed_os_statistics": "0",
+                    "timed_statistics": "TRUE",
+                    "trace_enabled": "TRUE",
+                    "transactions": "2499",
+                    "transactions_per_rollback_segment": "5",
+                    "undo_retention": "900",
+                    "workarea_size_policy": "Auto"
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "OracleParamGroup2": {
+            "Type": "AWS::RDS::DBParameterGroup",
+            "Properties": {
+                "Description": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "RDS Parameter Group for Oracle State Farm in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "OracleParamGroup2": {
-                "Type": "AWS::RDS::DBParameterGroup",
-                "Properties": {
-                    "Description": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "RDS Parameter Group for Oracle State Farm in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "Family": "oracle-se-11.2",
-                    "Parameters": {
-                        "recyclebin": "on",
-                        "aq_tm_processes": "1",
-                        "audit_trail": "DB",
-                        "background_core_dump": "partial",
-                        "bitmap_merge_area_size": "1048576",
-                        "blank_trimming": "FALSE",
-                        "client_result_cache_lag": "3000",
-                        "client_result_cache_size": "0",
-                        "commit_point_strength": "1",
-                        "compatible": "11.2.0.0.0",
-                        "control_file_record_keep_time": "7",
-                        "control_management_pack_access": "DIAGNOSTIC+TUNING",
-                        "cpu_count": "8",
-                        "create_bitmap_area_size": "8388608",
-                        "cursor_bind_capture_destination": "memory+disk",
-                        "cursor_sharing": "EXACT",
-                        "db_block_checking": "FALSE",
-                        "db_block_checksum": "Typical",
-                        "db_cache_advice": "ON",
-                        "db_cache_size": "0",
-                        "db_file_multiblock_read_count": "27",
-                        "db_files": "200",
-                        "db_flashback_retention_target": "1440",
-                        "db_keep_cache_size": "0",
-                        "db_lost_write_protect": "NONE",
-                        "db_recycle_cache_size": "0",
-                        "db_securefile": "PERMITTED",
-                        "db_ultra_safe": "OFF",
-                        "db_writer_processes": "1",
-                        "ddl_lock_timeout": "0",
-                        "deferred_segment_creation": "TRUE",
-                        "dispatchers": "(PROTOCOL=TCP) (SERVICE=cssdlc12XDB)",
-                        "distributed_lock_timeout": "60",
-                        "dml_locks": "9996",
-                        "enable_ddl_logging": "FALSE",
-                        "fast_start_parallel_rollback": "Low",
-                        "global_names": "FALSE",
-                        "hs_autoregister": "TRUE",
-                        "job_queue_processes": "1000",
-                        "large_pool_size": "0",
-                        "ldap_directory_access": "None",
-                        "license_max_sessions": "0",
-                        "license_max_users": "0",
-                        "license_sessions_warning": "0",
-                        "log_archive_max_processes": "4",
-                        "log_archive_min_succeed_dest": "1",
-                        "log_archive_trace": "0",
-                        "log_buffer": "17989632",
-                        "log_checkpoint_interval": "0",
-                        "log_checkpoint_timeout": "1800",
-                        "log_checkpoints_to_alert": "FALSE",
-                        "max_dump_file_size": "unlimited",
-                        "nls_length_semantics": "BYTE",
-                        "nls_nchar_conv_excp": "FALSE",
-                        "object_cache_max_size_percent": "10",
-                        "object_cache_optimal_size": "102400",
-                        "olap_page_pool_size": "0",
-                        "open_cursors": "300",
-                        "open_links": "4",
-                        "open_links_per_instance": "4",
-                        "optimizer_capture_sql_plan_baselines": "FALSE",
-                        "optimizer_dynamic_sampling": "2",
-                        "optimizer_features_enable": "11.2.0.3",
-                        "optimizer_index_caching": "0",
-                        "optimizer_index_cost_adj": "100",
-                        "optimizer_mode":  "ALL_ROWS",
-                        "optimizer_secure_view_merging": "TRUE",
-                        "optimizer_use_invisible_indexes": "FALSE",
-                        "optimizer_use_pending_statistics": "FALSE",
-                        "optimizer_use_sql_plan_baselines": "TRUE",
-                        "parallel_adaptive_multi_user": "TRUE",
-                        "parallel_degree_limit": "CPU",
-                        "parallel_degree_policy": "MANUAL",
-                        "parallel_execution_message_size": "16384",
-                        "parallel_max_servers": "320",
-                        "parallel_min_servers": "0",
-                        "parallel_min_time_threshold": "AUTO",
-                        "parallel_servers_target": "128",
-                        "parallel_threads_per_cpu": "2",
-                        "permit_92_wrap_format": "TRUE",
-                        "pga_aggregate_target": "0",
-                        "plscope_settings": "IDENTIFIERS:NONE",
-                        "plsql_code_type": "INTERPRETED",
-                        "plsql_optimize_level": "2",
-                        "plsql_warnings": "DISABLE:ALL",
-                        "processes": "1500",
-                        "query_rewrite_enabled": "TRUE",
-                        "query_rewrite_integrity": "enforced",
-                        "remote_dependencies_mode": "TIMESTAMP",
-                        "replication_dependency_tracking": "TRUE",
-                        "resource_limit": "FALSE",
-                        "result_cache_max_result": "5",
-                        "result_cache_max_size": "7110656",
-                        "result_cache_mode": "MANUAL",
-                        "result_cache_remote_expiration": "0",
-                        "resumable_timeout": "0",
-                        "sec_case_sensitive_logon": "TRUE",
-                        "sec_max_failed_login_attempts": "10",
-                        "sec_protocol_error_further_action": "CONTINUE",
-                        "sec_protocol_error_trace_action": "TRACE",
-                        "sec_return_server_release_banner": "FALSE",
-                        "session_max_open_files": "10",
-                        "sessions": "2272",
-                        "sga_max_size": "2835349504",
-                        "sga_target": "0",
-                        "shadow_core_dump": "partial",
-                        "shared_pool_reserved_size": "53687091",
-                        "shared_pool_size": "0",
-                        "shared_servers": "1",
-                        "skip_unusable_indexes": "TRUE",
-                        "sort_area_retained_size": "0",
-                        "sort_area_size": "65536",
-                        "sql92_security": "FALSE",
-                        "sqltune_category": "DEFAULT",
-                        "star_transformation_enabled": "FALSE",
-                        "statistics_level": "TYPICAL",
-                        "streams_pool_size": "0",
-                        "timed_os_statistics": "0",
-                        "timed_statistics": "TRUE",
-                        "trace_enabled": "TRUE",
-                        "transactions": "2499",
-                        "transactions_per_rollback_segment": "5",
-                        "undo_retention": "900",
-                        "workarea_size_policy": "Auto"
-                    },
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    ]
+                },
+                "Family": "oracle-se-11.2",
+                "Parameters": {
+                    "recyclebin": "on",
+                    "aq_tm_processes": "1",
+                    "audit_trail": "DB",
+                    "background_core_dump": "partial",
+                    "bitmap_merge_area_size": "1048576",
+                    "blank_trimming": "FALSE",
+                    "client_result_cache_lag": "3000",
+                    "client_result_cache_size": "0",
+                    "commit_point_strength": "1",
+                    "compatible": "11.2.0.0.0",
+                    "control_file_record_keep_time": "7",
+                    "control_management_pack_access": "DIAGNOSTIC+TUNING",
+                    "cpu_count": "8",
+                    "create_bitmap_area_size": "8388608",
+                    "cursor_bind_capture_destination": "memory+disk",
+                    "cursor_sharing": "EXACT",
+                    "db_block_checking": "FALSE",
+                    "db_block_checksum": "Typical",
+                    "db_cache_advice": "ON",
+                    "db_cache_size": "0",
+                    "db_file_multiblock_read_count": "27",
+                    "db_files": "200",
+                    "db_flashback_retention_target": "1440",
+                    "db_keep_cache_size": "0",
+                    "db_lost_write_protect": "NONE",
+                    "db_recycle_cache_size": "0",
+                    "db_securefile": "PERMITTED",
+                    "db_ultra_safe": "OFF",
+                    "db_writer_processes": "1",
+                    "ddl_lock_timeout": "0",
+                    "deferred_segment_creation": "TRUE",
+                    "dispatchers": "(PROTOCOL=TCP) (SERVICE=cssdlc12XDB)",
+                    "distributed_lock_timeout": "60",
+                    "dml_locks": "9996",
+                    "enable_ddl_logging": "FALSE",
+                    "fast_start_parallel_rollback": "Low",
+                    "global_names": "FALSE",
+                    "hs_autoregister": "TRUE",
+                    "job_queue_processes": "1000",
+                    "large_pool_size": "0",
+                    "ldap_directory_access": "None",
+                    "license_max_sessions": "0",
+                    "license_max_users": "0",
+                    "license_sessions_warning": "0",
+                    "log_archive_max_processes": "4",
+                    "log_archive_min_succeed_dest": "1",
+                    "log_archive_trace": "0",
+                    "log_buffer": "17989632",
+                    "log_checkpoint_interval": "0",
+                    "log_checkpoint_timeout": "1800",
+                    "log_checkpoints_to_alert": "FALSE",
+                    "max_dump_file_size": "unlimited",
+                    "nls_length_semantics": "BYTE",
+                    "nls_nchar_conv_excp": "FALSE",
+                    "object_cache_max_size_percent": "10",
+                    "object_cache_optimal_size": "102400",
+                    "olap_page_pool_size": "0",
+                    "open_cursors": "300",
+                    "open_links": "4",
+                    "open_links_per_instance": "4",
+                    "optimizer_capture_sql_plan_baselines": "FALSE",
+                    "optimizer_dynamic_sampling": "2",
+                    "optimizer_features_enable": "11.2.0.3",
+                    "optimizer_index_caching": "0",
+                    "optimizer_index_cost_adj": "100",
+                    "optimizer_mode": "ALL_ROWS",
+                    "optimizer_secure_view_merging": "TRUE",
+                    "optimizer_use_invisible_indexes": "FALSE",
+                    "optimizer_use_pending_statistics": "FALSE",
+                    "optimizer_use_sql_plan_baselines": "TRUE",
+                    "parallel_adaptive_multi_user": "TRUE",
+                    "parallel_degree_limit": "CPU",
+                    "parallel_degree_policy": "MANUAL",
+                    "parallel_execution_message_size": "16384",
+                    "parallel_max_servers": "320",
+                    "parallel_min_servers": "0",
+                    "parallel_min_time_threshold": "AUTO",
+                    "parallel_servers_target": "128",
+                    "parallel_threads_per_cpu": "2",
+                    "permit_92_wrap_format": "TRUE",
+                    "pga_aggregate_target": "0",
+                    "plscope_settings": "IDENTIFIERS:NONE",
+                    "plsql_code_type": "INTERPRETED",
+                    "plsql_optimize_level": "2",
+                    "plsql_warnings": "DISABLE:ALL",
+                    "processes": "1500",
+                    "query_rewrite_enabled": "TRUE",
+                    "query_rewrite_integrity": "enforced",
+                    "remote_dependencies_mode": "TIMESTAMP",
+                    "replication_dependency_tracking": "TRUE",
+                    "resource_limit": "FALSE",
+                    "result_cache_max_result": "5",
+                    "result_cache_max_size": "7110656",
+                    "result_cache_mode": "MANUAL",
+                    "result_cache_remote_expiration": "0",
+                    "resumable_timeout": "0",
+                    "sec_case_sensitive_logon": "TRUE",
+                    "sec_max_failed_login_attempts": "10",
+                    "sec_protocol_error_further_action": "CONTINUE",
+                    "sec_protocol_error_trace_action": "TRACE",
+                    "sec_return_server_release_banner": "FALSE",
+                    "session_max_open_files": "10",
+                    "sessions": "2272",
+                    "sga_max_size": "2835349504",
+                    "sga_target": "0",
+                    "shadow_core_dump": "partial",
+                    "shared_pool_reserved_size": "53687091",
+                    "shared_pool_size": "0",
+                    "shared_servers": "1",
+                    "skip_unusable_indexes": "TRUE",
+                    "sort_area_retained_size": "0",
+                    "sort_area_size": "65536",
+                    "sql92_security": "FALSE",
+                    "sqltune_category": "DEFAULT",
+                    "star_transformation_enabled": "FALSE",
+                    "statistics_level": "TYPICAL",
+                    "streams_pool_size": "0",
+                    "timed_os_statistics": "0",
+                    "timed_statistics": "TRUE",
+                    "trace_enabled": "TRUE",
+                    "transactions": "2499",
+                    "transactions_per_rollback_segment": "5",
+                    "undo_retention": "900",
+                    "workarea_size_policy": "Auto"
+                },
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "PodSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "PodSecurityGroup in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
-                    ]
-                }
-            },
-            "PodSecurityGroup": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Properties": {
-                    "GroupDescription": {
-                        "FN::Join": [
-                            "",
-                            [
-                                "PodSecurityGroup in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
                         ]
-                    },
-                    "VpcID": {
-                        "Ref": "0VpcId"
-                    },
-                    "SecurityGroupIngress": [
-                        {
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "SecurityGroupIngress": [
+                    {
                         "IpProtocol": "-1",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "-1",
-                            "CidrIp": "192.168.0.0/16"
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "-1",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
                         }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
-                                "Ref": "AWS::StackName"
-                            }
-                        }
-                    ]
-                }
-            },
+                    }
+                ]
+            }
+        },
             "LB1SecurityGroup": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Condition": "CreateLB1",
-                "Properties": {
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "LB1 A00 Security Group in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
-                        ]
-                    },
-                    "VpcId": {
-                        "Ref": "0VpcId"
-                    },
-                    "SecurityGroupIngress": [
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "192.168.0.0/16"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "192.168.0.0/16"
-                        }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Condition": "CreateLB1",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB1 A00 Security Group in ",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
+                        ]
                     ]
-                }
-            },
-            "ElasticLoadBalancerA00": {
-                "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-                "Condition": "CreateLB1",
-                "Properties": {
-                    "LoadBalancerName": {
+                },
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "192.168.0.0/16"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ]
+            }
+        },
+        "ElasticLoadBalancerA00": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Condition": "CreateLB1",
+            "Properties": {
+                "LoadBalancerName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB1-A00-",
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                        ]
+                    ]
+                },
+                "Scheme": "internal",
+                "Subnets": [
+                    {
+                        "Ref": "EC2Subnet"
+                    }
+                ],
+                "Listeners": [
+                    {
+                        "LoadBalancerPort": "443",
+                        "InstancePort": 443,
+                        "Protocol": "TCP"
+                    }
+                ],
+                "HealthCheck": {
+                    "Target": {
                         "Fn::Join": [
                             "",
                             [
-                                "LB1-A00-",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
+                                "HTTP:",
+                                443,
+                                "/"
                             ]
                         ]
                     },
-                    "Scheme": "internal",
-                    "Subnets": [
-                        {
-                            "Ref": "EC2Subnet"
-                        }
-                    ],
-                    "Listeners": [
-                        {
-                            "LoadBalancerPort": "443",
-                            "InstancePort": 443,
-                            "Protocol": "TCP"
-                        }
-                    ],
-                    "HealthCheck": {
-                        "Target": {
+                    "HealthyThreshold": "3",
+                    "UnhealthyThreshold": "5",
+                    "Interval": "30",
+                    "Timeout": "5"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "LB1SecurityGroup"
+                    }
+                ]
+            }
+        },
+        "LB2SecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Condition": "CreateLB2",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB2 A01 Security Group in ",
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                        ]
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "-1",
+                        "CidrIp": {
                             "Fn::Join": [
                                 "",
                                 [
-                                    "HTTP:",
-                                    443,
-                                    "/"
+                                    "10.201.",
+                                    {
+                                        "Ref": "1SubnetNumber"
+                                    },
+                                    ".0/24"
                                 ]
                             ]
-                        },
-                        "HealthyThreshold": "3",
-                        "UnhealthyThreshold": "5",
-                        "Interval": "30",
-                        "Timeout": "5"
-                    },
-                    "SecurityGroups": [
-                        {
-                            "Ref": "LB1SecurityGroup"
                         }
-                    ]
-                }
-            },
-            "LB2SecurityGroup": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Condition": "CreateLB2",
-                "Properties": {
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "LB2 A01 Security Group in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
-                        ]
                     },
-                    "VpcId": {
-                        "Ref": "0VpcId"
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "10.0.0.0/8"
                     },
-                    "SecurityGroupIngress": [
-                        {
-                            "IpProtocol": "-1",
-                            "CidrIp": {
-                                "Fn::Join": [
-                                    "",
-                                    [
-                                        "10.201.",
-                                        {
-                                            "Ref": "1SubnetNumber"
-                                        },
-                                        ".0/24"
-                                    ]
-                                ]
-                            }
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "192.168.0.0/16"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "192.168.0.0/16"
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "192.168.0.0/16"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
                         }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    }
+                ]
+            }
+        },
+        "ElasticLoadBalancerA01": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Condition": "CreateLB2",
+            "Properties": {
+                "LoadBalancerName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB2-A01-",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
+                        ]
                     ]
-                }
-            },
-            "ElasticLoadBalancerA01": {
-                "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-                "Condition": "CreateLB2",
-                "Properties": {
-                    "LoadBalancerName": {
+                },
+                "Scheme": "internal",
+                "Subnets": [
+                    {
+                        "Ref": "EC2Subnet"
+                    }
+                ],
+                "Listeners": [
+                    {
+                        "LoadBalancerPort": "443",
+                        "InstancePort": 443,
+                        "Protocol": "TCP"
+                    }
+                ],
+                "HealthCheck": {
+                    "Target": {
                         "Fn::Join": [
                             "",
                             [
-                                "LB2-A01-",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
+                                "HTTP:",
+                                443,
+                                "/"
                             ]
                         ]
                     },
-                    "Scheme": "internal",
-                    "Subnets": [
-                        {
-                            "Ref": "EC2Subnet"
-                        }
-                    ],
-                    "Listeners": [
-                        {
-                            "LoadBalancerPort": "443",
-                            "InstancePort": 443,
-                            "Protocol": "TCP"
-                        }
-                    ],
-                    "HealthCheck": {
-                        "Target": {
+                    "HealthyThreshold": "3",
+                    "UnhealthyThreshold": "5",
+                    "Interval": "30",
+                    "Timeout": "5"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "LB2SecurityGroup"
+                    }
+                ]
+            }
+        },
+        "LB3SecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Condition": "CreateLB3",
+            "Properties": {
+                "GroupDescription": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB3 B Security Group in ",
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                        ]
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "0VpcId"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "-1",
+                        "CidrIp": {
                             "Fn::Join": [
                                 "",
                                 [
-                                    "HTTP:",
-                                    443,
-                                    "/"
+                                    "10.201.",
+                                    {
+                                        "Ref": "1SubnetNumber"
+                                    },
+                                    ".0/24"
                                 ]
                             ]
-                        },
-                        "HealthyThreshold": "3",
-                        "UnhealthyThreshold": "5",
-                        "Interval": "30",
-                        "Timeout": "5"
-                    },
-                    "SecurityGroups": [
-                        {
-                            "Ref": "LB2SecurityGroup"
                         }
-                    ]
-                }
-            },
-            "LB3SecurityGroup": {
-                "Type": "AWS::EC2::SecurityGroup",
-                "Condition": "CreateLB3",
-                "Properties": {
-                    "GroupDescription": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "LB3 B Security Group in ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
-                            ]
-                        ]
                     },
-                    "VpcId": {
-                        "Ref": "0VpcId"
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "10.0.0.0/8"
                     },
-                    "SecurityGroupIngress": [
-                        {
-                            "IpProtocol": "-1",
-                            "CidrIp": {
-                                "Fn::Join": [
-                                    "",
-                                    [
-                                        "10.201.",
-                                        {
-                                            "Ref": "1SubnetNumber"
-                                        },
-                                        ".0/24"
-                                    ]
-                                ]
-                            }
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "433",
-                            "ToPort": "433",
-                            "CidrIp": "192.168.0.0/16"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "10.0.0.0/8"
-                        },
-                        {
-                            "IpProtocol": "tcp",
-                            "FromPort": "80",
-                            "ToPort": "80",
-                            "CidrIp": "192.168.0.0/16"
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "433",
+                        "ToPort": "433",
+                        "CidrIp": "192.168.0.0/16"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "10.0.0.0/8"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "192.168.0.0/16"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Application",
+                        "Value": {
+                            "Ref": "AWS::StackName"
                         }
-                    ],
-                    "Tags": [
-                        {
-                            "Key": "Application",
-                            "Value": {
+                    }
+                ]
+            }
+        },
+        "ElasticLoadBalancerB": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Condition": "CreateLB3",
+            "Properties": {
+                "LoadBalancerName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "LB3-B-",
+                            {
                                 "Ref": "AWS::StackName"
                             }
-                        }
+                        ]
                     ]
-                }
-            },
-            "ElasticLoadBalancerB": {
-                "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-                "Condition": "CreateLB3",
-                "Properties": {
-                    "LoadBalancerName": {
+                },
+                "Scheme": "internal",
+                "Subnets": [
+                    {
+                        "Ref": "EC2Subnet"
+                    }
+                ],
+                "Listeners": [
+                    {
+                        "LoadBalancerPort": "443",
+                        "InstancePort": 443,
+                        "Protocol": "TCP"
+                    }
+                ],
+                "HealthCheck": {
+                    "Target": {
                         "Fn::Join": [
                             "",
                             [
-                                "LB3-B-",
-                                {
-                                    "Ref": "AWS::StackName"
-                                }
+                                "HTTP:",
+                                443,
+                                "/"
                             ]
                         ]
                     },
-                    "Scheme": "internal",
-                    "Subnets": [
-                        {
-                            "Ref": "EC2Subnet"
-                        }
-                    ],
-                    "Listeners": [
-                        {
-                            "LoadBalancerPort": "443",
-                            "InstancePort": 443,
-                            "Protocol": "TCP"
-                        }
-                    ],
-                    "HealthCheck": {
-                        "Target": {
-                            "Fn::Join": [
-                                "",
-                                [
-                                    "HTTP:",
-                                    443,
-                                    "/"
-                                ]
-                            ]
-                        },
-                        "HealthyThreshold": "3",
-                        "UnhealthyThreshold": "5",
-                        "Interval": "30",
-                        "Timeout": "5"
-                    },
-                    "SecurityGroups": [
-                        {
-                            "Ref": "LB3SecurityGroup"
-                        }
-                    ]
-                }
-            },
+                    "HealthyThreshold": "3",
+                    "UnhealthyThreshold": "5",
+                    "Interval": "30",
+                    "Timeout": "5"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "LB3SecurityGroup"
+                    }
+                ]
+            }
+        },
         "ServerA0": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
@@ -1193,7 +1246,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-9ed834f6",
+                "ImageId": "ami-2ae02342",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1216,18 +1269,27 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-A400.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-A400.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "UserData": "A400"
             }
         },
         "ServerA1": {
-            "Type": "AWS::EC2::Instance",
+        "Type": "AWS::EC2::Instance",
             "Properties": {
                 "AvailabilityZone": {
                     "Fn::Select": [
@@ -1237,7 +1299,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-9ed834f6",
+                "ImageId": "ami-2ae02342",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1260,13 +1322,23 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-A401.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-A401.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+            }
+            ],
+			
                 "UserData": "A401"
             }
         },
@@ -1281,7 +1353,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-9ed834f6",
+                "ImageId": "ami-2ae02342",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1304,13 +1376,22 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-B400.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-B400.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "UserData": "B400"
             }
         },
@@ -1325,7 +1406,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-9ed834f6",
+                "ImageId": "ami-2ae02342",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1348,13 +1429,22 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-C400.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-C400.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "UserData": "C400"
             }
         },
@@ -1369,7 +1459,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-6ed93506",
+                "ImageId": "ami-b0e320d8",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1392,13 +1482,22 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-D400.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-D400.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "UserData": "D400"
             }
         },
@@ -1413,7 +1512,7 @@
                         }
                     ]
                 },
-                "ImageId" : "ami-88de32e0",
+                "ImageId": "ami-5e24e936",
                 "InstanceType": "m3.medium",
                 "KeyName": "AgeroPod",
                 "PrivateIpAddress": {
@@ -1436,55 +1535,75 @@
                 "SubnetId": {
                     "Ref": "EC2Subnet"
                 },
-                "Tags" : [
-                 {
-                    "Key" : "Name",
-                    "Value" : {  "Fn::Join": [ "", [ { "Ref": "01Podname"}, "-srv-E400.ccas-ccg.com"]] }
-             }
-             ],
-            
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    {
+                                        "Ref": "01Podname"
+                                    },
+                                    "-srv-E400.ccas-ccg.com"
+                                ]
+                            ]
+                        }
+                    }
+                ],
                 "UserData": "E400"
             }
         },
         "StateFarmRDS": {
-            "Type" : "AWS::RDS::DBInstance",
-            "Properties" : 
-            {
-                    "AllocatedStorage" : "100",
-                    "DBInstanceClass" : "db.m3.medium",
-                    "DBName" : "cssdlc12",
-                    "DBInstanceIdentifier" : "cssdlc12",
-                    "DBParameterGroupName" : { "Ref" : "OracleParamGroup2" },
-                    "DBSecurityGroups" : [ { "Ref" : "DbSecurity2ByEC2SecurityGroup" } ],
-                    "DBSubnetGroupName" : { "Ref" : "RDSGroup1" },
-                    "Engine" : "oracle-se",
-                    "EngineVersion" : "11.2.0.3.v1",
-                    "MasterUsername" : "masteruser",
-                    "MasterUserPassword" : "qwerasdfZXCV",
-                    "AutoMinorVersionUpgrade" : "FALSE",
-                    "CharacterSetName" : "WE8MSWIN1252"
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "AllocatedStorage": "100",
+                "DBInstanceClass": "db.m3.medium",
+                "DBName": "cssdlc12",
+                "DBInstanceIdentifier": "cssdlc12",
+                "DBParameterGroupName": {
+                    "Ref": "OracleParamGroup2"
+                },
+                "DBSecurityGroups": [
+                    {
+                        "Ref": "DbSecurity2ByEC2SecurityGroup"
+                    }
+                ],
+                "DBSubnetGroupName": {
+                    "Ref": "RDSGroup1"
+                },
+                "Engine": "oracle-se",
+                "EngineVersion": "11.2.0.3.v1",
+                "MasterUsername": "masteruser",
+                "MasterUserPassword": "qwerasdfZXCV",
+                "AutoMinorVersionUpgrade": "FALSE"                
             }
         },
         "PODORARDS": {
-            "Type" : "AWS::RDS::DBInstance",
-            "Properties" : 
-            {
-                    "AllocatedStorage" : "200",
-                    "DBInstanceClass" : "db.m3.medium",
-                    "DBName" : "orsdlc12",
-                    "DBInstanceIdentifier" : "orsdlc12",
-                    "DBParameterGroupName" : { "Ref" : "OracleParamGroup" },
-                    "DBSecurityGroups" : [ { "Ref" : "DbSecurityByEC2SecurityGroup" } ],
-                    "DBSubnetGroupName" : { "Ref" : "RDSGroup2" },
-                    "Engine" : "oracle-se",
-                    "EngineVersion" : "11.2.0.3.v1",
-                    "MasterUsername" : "masteruser",
-                    "MasterUserPassword" : "qwerasdfZXCV",
-                    "DBSnapshotIdentifier" : "rdssnapshotcopytest",
-                    "AutoMinorVersionUpgrade" : "FALSE",
-                    "CharacterSetName" : "WE8MSWIN1252"
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "AllocatedStorage": "200",
+                "DBInstanceClass": "db.m3.medium",
+                "DBName": "orsdlc12",
+                "DBInstanceIdentifier": "orsdlc12",
+                "DBParameterGroupName": {
+                    "Ref": "OracleParamGroup"
+                },
+                "DBSecurityGroups": [
+                    {
+                        "Ref": "DbSecurityByEC2SecurityGroup"
+                    }
+                ],
+                "DBSubnetGroupName": {
+                    "Ref": "RDSGroup2"
+                },
+                "Engine": "oracle-se",
+                "EngineVersion": "11.2.0.3.v1",
+                "MasterUsername": "masteruser",
+                "MasterUserPassword": "qwerasdfZXCV",
+                "DBSnapshotIdentifier": "rdssnapshotcopytest",
+                "AutoMinorVersionUpgrade": "FALSE"
             }
         }
     }
 }
-
